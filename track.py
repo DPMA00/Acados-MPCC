@@ -8,7 +8,7 @@ from scipy.interpolate import CubicSpline
 
 
 class Track:
-    def __init__(self, data='/home/dpma/test_ws/py_tests/new_mapping/track_control_pts.csv'):
+    def __init__(self, data='track_control_pts.csv'):
         self.df = pd.read_csv(data, delimiter=',')
         xy = self.df[['x', 'y']].values
         x = xy[:, 0]
