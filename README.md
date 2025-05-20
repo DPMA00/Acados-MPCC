@@ -1,10 +1,12 @@
 # MPCC For Differential Drive Robots (Acados)
 
-This project implements a real-time model preditive contouring controller (MPCC) for a differential drive robot to follow a 2D spline-based track. The general controller architecture is based on [this paper](https://arxiv.org/pdf/1711.07300). 
+This project implements a real-time model preditive contouring controller (MPCC) for a differential drive robot to follow a 2D spline-based track. The general controller architecture is based on [this paper](https://arxiv.org/pdf/1711.07300).
+
+Note that this module does **not** support dynamic path generations at runtime, this is because no full LUT is used. Symbolic track expressions are baked into the optimization problem when the code is generated. Hence it's mainly aimed at racing applications where a fixed track is to be implemented.
 
 The main challenge was figuring out how to parametrize the track in a way that works symbolically with the CasADi/Acados framework.
 
-## Track Parametrization: What I Did
+## Track Parametrization:
 
 1. **Track Generation**
    
@@ -20,10 +22,11 @@ The main challenge was figuring out how to parametrize the track in a way that w
 
 4. **Discretization into $\theta_p$ Grid**
 
-   I defined a uniformly spaced lookup table (LUT) of arclength values called $\theta_p$, ranging from $0$ to the total track length $(L)$. Each value of $\theta_p$ is mapped to $(x, y)$ using the spline functions.
+   I defined a uniformly spaced LUT of arclength values called $\theta_p$, ranging from $0$ to the total track length $(L)$. Each value of $\theta_p$ is mapped to $(x, y)$ using the spline functions.
 
 5. **Symbolic Track Lookup in CasADi**
    
-    Here’s the interesting part: CasADi offers an ```interpolate()``` function that allows you to symbolically interpolate values from a lookup table. This means I can use $\theta$ as a symbolic decision variable and obtain smooth $x(\theta)$ and $y(\theta)$ inside the optimization problem — and even take derivatives.
+    CasADi offers an ```interpolate()``` function that allows you to symbolically interpolate values from a lookup table. This means $\theta$ can be used as a symbolic decision variable and also obtain smooth $x(\theta)$ and $y(\theta)$ inside the optimization problem — as well as support differentiation.
 
-    There is a catch, though: this feature requires MX graph types in CasADi, so both the states and dynamics must be defined using MX symbols (not SX). Once that's in place, it will work.
+    This feature does require the use of MX types in CasADi, so both the states and dynamics must be defined using using MX symbolics (**SX will not work**).
+
