@@ -18,15 +18,15 @@ The main challenge was figuring out how to parametrize the track in a way that w
 
 3. **Mapping $x(s)$, $y(s)$**
    
-   I used NumPy’s CubicSpline to map $x$ and $y$ coordinates to the arclength array s. This results in two objects, $cs_x$ and $cs_y$, which can return position values given an arclength input.
+   NumPy’s CubicSpline is used to map $x$ and $y$ coordinates to the arclength array s. This results in two objects, $cs_x$ and $cs_y$, which can return position values given an arclength input.
 
 4. **Discretization into $\theta_p$ Grid**
 
-   I defined a uniformly spaced LUT of arclength values called $\theta_p$, ranging from $0$ to the total track length $(L)$. Each value of $\theta_p$ is mapped to $(x, y)$ using the spline functions.
+   A uniformly spaced LUT of arclength values called $\theta_p$ is defined, ranging from $0$ to the total track length $(L)$. Each value of $\theta_p$ is mapped to $(x, y)$ using the spline functions.
 
 5. **Symbolic Track Lookup in CasADi**
    
-    CasADi offers an ```interpolate()``` function that allows you to symbolically interpolate values from a lookup table. This means $\theta$ can be used as a symbolic decision variable and also obtain smooth $x(\theta)$ and $y(\theta)$ inside the optimization problem — as well as support differentiation.
+    CasADi offers an ```interpolant()``` function that allows you to symbolically interpolate values from a lookup table. This means $\theta$ can be used as a symbolic decision variable and also obtain smooth $x(\theta)$ and $y(\theta)$ inside the optimization problem — as well as support differentiation.
 
     This feature does require the use of MX types in CasADi, so both the states and dynamics must be defined using using MX symbolics (**SX will not work**).
 
